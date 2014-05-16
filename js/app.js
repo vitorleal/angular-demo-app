@@ -18,40 +18,40 @@ var app = angular.module('appDemo', [])
 
 
 //Login
-app.controller('login', function ($scope, $location) {
+app.controller('login', function ($scope, $location, $http) {
   $scope.enviar = function () {
-    $location.path('/lista');
+    $http.post('http://127.0.0.1:5000/login', {
+      email: $scope.email,
+      pass : $scope.pass
+    })
+    .success(function (data) {
+      if (data.login) {
+        $location.path('/lista');
+
+      } else {
+        $scope.error = 'Usuário ou senha inválidos';
+      }
+    })
   };
 });
 
 
 //Lista de amigos
-app.controller('listaAmigos', function ($scope) {
-  $scope.friends = [
-    { name: 'David',   invited: false, thumb: 'http://lorempixel.com/50/50/sports/' },
-    { name: 'Erico',   invited: false, thumb: 'http://lorempixel.com/50/50/sports/1' },
-    { name: 'Sheldon', invited: false, thumb: 'http://lorempixel.com/50/50/sports/2' },
-    { name: 'João',    invited: false, thumb: 'http://lorempixel.com/50/50/sports/3' },
-    { name: 'Fábio',   invited: false, thumb: 'http://lorempixel.com/50/50/sports/4' },
-    { name: 'Marcos',  invited: false, thumb: 'http://lorempixel.com/50/50/sports/5' },
-    { name: 'David',   invited: false, thumb: 'http://lorempixel.com/50/50/sports/6' },
-    { name: 'Erico',   invited: false, thumb: 'http://lorempixel.com/50/50/sports/7' },
-    { name: 'Sheldon', invited: false, thumb: 'http://lorempixel.com/50/50/sports/8' },
-    { name: 'João',    invited: false, thumb: 'http://lorempixel.com/50/50/sports/9' },
-    { name: 'Fábio',   invited: false, thumb: 'http://lorempixel.com/50/50/sports/10' }
-  ];
+app.controller('listaAmigos', function ($scope, $http) {
+  $http.get('http://127.0.0.1:5000/friends')
+    .success(function (data) {
+      $scope.friends = data.friends;
+    });
 });
 
 
-//Detalhes
-app.controller('perfil', function ($scope) {
-  $scope.info = {
-    name   : 'Vitor Leal',
-    address: 'Rua Lorem Ipsum Dolor 902',
-    job    : 'Analista de Sistemas Senior',
-    age    : '28',
-    thumb  : 'http://lorempixel.com/120/120/sports/'
-  };
+//Perfil
+app.controller('perfil', function ($scope, $http) {
+  $http.get('http://127.0.0.1:5000/user')
+    .success(function (data) {
+      console.log(data);
+      $scope.user = data;
+    });
 
   $scope.back= '#/lista';
 });
